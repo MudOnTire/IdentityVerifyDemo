@@ -52,12 +52,18 @@ export default class Main extends Component {
         }
     }
 
+    componentDidMount(){
+        console.log(this.refs.progressToast);
+    }
+
     _identify = async () => {
         this.setState({ isLoading: true });
         console.log(`will request with ${this.state.name}, ${this.state.identityCode}`);
         const response = await identifyService.identifyAsync(this.state.name, this.state.identityCode);
+        this.setState({ isLoading: false });
+        console.log(this.refs.progressToast);
+        this.refs.progressToast.succeed();
         setTimeout(() => {
-            this.setState({ isLoading: false });
             Actions.push('resultScene', { response: response });
         }, 1000);
     }
@@ -91,7 +97,7 @@ export default class Main extends Component {
                     </Text>
                 </TouchableHighlight>
                 {
-                    this.state.isLoading && <ProgressToast title='正在验证...' />
+                    this.state.isLoading && <ProgressToast ref='progressToast' title='正在验证...' />
                 }
             </View>
         )
