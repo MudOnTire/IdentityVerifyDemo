@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View, TextInput, Text, TouchableHighlight, StyleSheet } from 'react-native';
-import identifyService from '../services/IdentityService';
+import identifyService from '../../services/IdentityService';
+import { Actions } from 'react-native-router-flux';
+import ProgressToast from '../../components/ProgressToast';
 
 var styles = StyleSheet.create({
     container: {
@@ -44,14 +46,20 @@ export default class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: false,
             name: '黄铭源',
             identityCode: '320483199405263115'
         }
     }
 
     _identify = async () => {
+        this.setState({ isLoading: true });
         console.log(`will request with ${this.state.name}, ${this.state.identityCode}`);
-        await identifyService.identifyAsync(this.state.name, this.state.identityCode);
+        const response = await identifyService.identifyAsync(this.state.name, this.state.identityCode);
+        setTimeout(() => {
+            this.setState({ isLoading: false });
+            Actions.push('resultScene', { response: response });
+        }, 1000);
     }
 
     render() {
@@ -77,11 +85,14 @@ export default class Main extends Component {
                     activeOpacity={0.8}
                     underlayColor='#952695'
                     style={styles.identifyBtn}
-                    onPress={ this._identify}>
+                    onPress={this._identify}>
                     <Text style={styles.identifyBtnText}>
                         验   证
                     </Text>
                 </TouchableHighlight>
+                {
+                    this.state.isLoading && <ProgressToast title='正在验证...' />
+                }
             </View>
         )
     }

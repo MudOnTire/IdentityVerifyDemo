@@ -11,12 +11,32 @@ import {
   Text,
   View
 } from 'react-native';
-import Main from './src/scenes/Main';
+import {
+  Scene,
+  Router,
+  Actions,
+  Reducer,
+  Overlay,
+  Tabs,
+  Modal,
+  Stack,
+  Lightbox,
+} from 'react-native-router-flux';
+import Main from './src/scenes/main/Main';
+import Result from './src/scenes/main/Result';
 
 export default class App extends Component<{}> {
   render() {
     return (
-      <Main />
+      <Router key='root'>
+        <Modal key='modal' hideNavBar>
+          <Lightbox key='lightbox'>
+            <Stack key='stack'>
+              {require('@scenes/main')}
+            </Stack>
+          </Lightbox>
+        </Modal>
+      </Router>
     );
   }
 }
